@@ -1,12 +1,12 @@
 image: python:3.6
-before_script:
-  - pip install tox
 stages:
   - style
   - deploy
 
 flake8:
   stage: style
+  before_script:
+    - pip install tox
   script:
     - tox -e flake8
 
