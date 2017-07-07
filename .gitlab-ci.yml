@@ -1,0 +1,23 @@
+image: python:3.6
+before_script:
+  - pip install tox
+stages:
+  - style
+  - deploy
+
+flake8:
+  stage: style
+  script:
+    - tox -e flake8
+
+pypi:
+  stage: deploy
+  script:
+    - pip install twine wheel
+    - python setup.py sdist bdist_wheel
+    - twine upload dist/*
+  only:
+    - tags@hobarrera/ocaclient
+  environment:
+    name: PyPI
+    url: https://pypi.python.org/pypi/ocaclient

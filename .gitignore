@@ -1,0 +1,8 @@
+*.egg*
+*.pyc
+*.sw?
+.tox
+__pycache__
+build
+dist
+ocaclient/version.py
