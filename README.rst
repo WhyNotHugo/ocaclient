@@ -3,7 +3,7 @@ OcaClient
 
 This library is a very simple client to OCA's Epak webservice. OCA's WS is very
 SOAP-like, so this is really a very light wrapper around ``zeep``, manually
-parsing responses that aren't proper entirely SOAP.
+parsing responses that aren't entirely SOAP.
 
 Usage example:
 
