@@ -16,12 +16,15 @@ class OcaOperationProxy:
             response = self.operation.__call__(*args, **kwargs)
 
         xml = etree.fromstring(response.content)
-        node = xml.xpath('//NewDataSet/Table')[0]
+        nodes = xml.xpath('//NewDataSet/Table')
 
-        data = {
+        data = [{
             child.tag.lower(): child.text
             for child in node.getchildren() if child.tag != 'XML'
-        }
+        } for node in nodes]
+
+        if len(data) == 1:
+            return data[0]
 
         return data
 
