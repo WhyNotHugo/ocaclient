@@ -4,6 +4,8 @@ from zeep.cache import SqliteCache
 from zeep.client import OperationProxy
 from zeep.transports import Transport
 
+WSDL = 'http://webservice.oca.com.ar/epak_tracking/Oep_TrackEPak.asmx?WSDL'
+
 
 class OcaOperationProxy:
 
@@ -33,11 +35,7 @@ class OcaClient:
 
     def __init__(self):
         transport = Transport(cache=SqliteCache())
-        self.client = Client(
-            'http://webservice.oca.com.ar/epak_tracking/Oep_TrackEPak.asmx'
-            '?WSDL',
-            transport=transport,
-        )
+        self.client = Client(WSDL, transport=transport)
 
     def __getattr__(self, key):
         value = getattr(self.client.service, key)
