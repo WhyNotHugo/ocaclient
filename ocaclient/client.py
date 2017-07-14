@@ -1,6 +1,7 @@
 from datetime import datetime
 from decimal import Decimal
 
+from dateutil import parser
 from lxml import etree
 from zeep import Client
 from zeep.cache import SqliteCache
@@ -13,6 +14,10 @@ WSDL = 'http://webservice.oca.com.ar/epak_tracking/Oep_TrackEPak.asmx?WSDL'
 NODE_TYPES = {
     'adicional': Decimal,
     'fecha': lambda s: datetime.strptime(s, '%d-%m-%Y').date(),
+    'fechaingreso': parser.parse,
+    'cantidadregistros': int,
+    'cantidadingresados': int,
+    'cantidadrechazados': int,
     'idcentroimposicion': int,
     'idtiposercicio': int,
     'nroproducto': int,
@@ -50,7 +55,7 @@ class OcaOperationProxy:
         response.raise_for_status()
 
         xml = etree.fromstring(response.content)
-        nodes = xml.xpath('//NewDataSet/Table')
+        nodes = xml.xpath('//NewDataSet/Table') or xml.findall('.//Resumen')
 
         data = [{
             child.tag.lower(): parse_node(child)
@@ -83,6 +88,15 @@ class OcaClient:
     def create_pickup_request(self, request, days, timerange, confirm=False):
         """
         Create a new pickup request order
+
+        Returns a dictionary with the following fields::
+
+            codigooperacion
+            fechaingreso
+            mailusuario
+            cantidadregistros
+            cantidadingresados
+            cantidadrechazados
 
         :param ocaclient.models.PickupRequest: The request to send to OCA.
         :param int days: How many days into the future this order must be
