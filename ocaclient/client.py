@@ -47,6 +47,8 @@ class OcaOperationProxy:
         with self.client.options(raw_response=True):
             response = self.operation.__call__(*args, **kwargs)
 
+        response.raise_for_status()
+
         xml = etree.fromstring(response.content)
         nodes = xml.xpath('//NewDataSet/Table')
 
@@ -63,9 +65,39 @@ class OcaOperationProxy:
 
 class OcaClient:
 
-    def __init__(self):
+    def __init__(self, username=None, password=None):
+        """
+        Creates a new OcaClient instance.
+
+        Username and password are only required for pick request creation.
+
+        :param str username: The username used at OCA's website.
+        :param str password: The password used at OCA's website.
+        """
         transport = Transport(cache=SqliteCache())
         self.client = Client(WSDL, transport=transport)
+
+        self.username = username
+        self.password = password
+
+    def create_pickup_request(self, request, days, timerange, confirm=False):
+        """
+        Create a new pickup request order
+
+        :param ocaclient.models.PickupRequest: The request to send to OCA.
+        :param int days: How many days into the future this order must be
+            picked up.
+        :params int timerange: the timerange where this order should be picked
+            up.  See `ocaclient.models.TIME_RANGES`.
+        """
+        return self.IngresoOR(
+            usr=self.username,
+            psw=self.password,
+            xml_Datos=request.serialize(),
+            ConfirmarRetiro=confirm,
+            DiasHastaRetiro=days,
+            idFranjaHoraria=timerange,
+        )
 
     def __getattr__(self, key):
         value = getattr(self.client.service, key)
