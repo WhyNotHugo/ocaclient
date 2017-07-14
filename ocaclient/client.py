@@ -8,6 +8,8 @@ from zeep.cache import SqliteCache
 from zeep.client import OperationProxy
 from zeep.transports import Transport
 
+from ocaclient import models
+
 
 WSDL = 'http://webservice.oca.com.ar/epak_tracking/Oep_TrackEPak.asmx?WSDL'
 
@@ -31,6 +33,11 @@ NODE_TYPES = {
 }
 
 
+RESPONSE_TYPES = {
+    'IngresoOR': models.PickupRequestResponse,
+}
+
+
 def parse_node(node):
     tag = node.tag.lower()
 
@@ -44,9 +51,10 @@ def parse_node(node):
 
 class OcaOperationProxy:
 
-    def __init__(self, operation, client):
+    def __init__(self, operation, client, return_type):
         self.operation = operation
         self.client = client
+        self.return_type = return_type
 
     def __call__(self, *args, **kwargs):
         with self.client.options(raw_response=True):
@@ -61,6 +69,9 @@ class OcaOperationProxy:
             child.tag.lower(): parse_node(child)
             for child in node.getchildren() if child.tag != 'XML'
         } for node in nodes]
+
+        if self.return_type:
+            data = [self.return_type(**entry) for entry in data]
 
         if len(data) == 1:
             return data[0]
@@ -89,15 +100,6 @@ class OcaClient:
         """
         Create a new pickup request order
 
-        Returns a dictionary with the following fields::
-
-            codigooperacion
-            fechaingreso
-            mailusuario
-            cantidadregistros
-            cantidadingresados
-            cantidadrechazados
-
         :param ocaclient.models.PickupRequest: The request to send to OCA.
         :param int days: How many days into the future this order must be
             picked up.
@@ -116,5 +118,6 @@ class OcaClient:
     def __getattr__(self, key):
         value = getattr(self.client.service, key)
         if isinstance(value, OperationProxy):
-            return OcaOperationProxy(value, self.client)
+            return_type = RESPONSE_TYPES.get(key, None)
+            return OcaOperationProxy(value, self.client, return_type)
         return value

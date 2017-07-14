@@ -13,6 +13,16 @@ TIME_RANGES = (
 )
 
 
+PickupRequestResponse = namedtuple('PickupRequestResponse', [
+    'cantidadingresados',
+    'cantidadrechazados',
+    'cantidadregistros',
+    'codigooperacion',
+    'fechaingreso',
+    'mailusuario',
+])
+
+
 class XmlNodeMixin:
     def sanitize_data(self, data):
         """
