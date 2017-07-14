@@ -56,7 +56,23 @@ class XmlNodeMixin:
 
 
 class PickupRequest(XmlNodeMixin):
+    """
+    This class models a pickup request sent to OCA
+
+    A pickup request is a request for OCA to physically come and pick up
+    packages to be send out.
+    """
     def __init__(self, account_number):
+        """
+        Create a new pickup request.
+
+        Origin data should be included via add_origin, and shipment data via
+        add_shipment.
+        Note that a single request can include multiple shipments.
+
+        :param str account_number: The account number given by the courrier.
+            Should look something like '123456/000.
+        """
         self.node = etree.Element("ROWS")
         etree.SubElement(
             self.node,
@@ -75,6 +91,9 @@ class PickupRequest(XmlNodeMixin):
         self.shipments.append(shipment.node)
 
     def serialize(self, pretty_print=True):
+        """
+        Returns this in the XML format that should to be sent to the WS.
+        """
         return etree.tostring(
             self.node,
             xml_declaration=True,

@@ -105,6 +105,9 @@ class OcaClient:
             picked up.
         :params int timerange: the timerange where this order should be picked
             up.  See `ocaclient.models.TIME_RANGES`.
+        :return: The request creation data.
+        :rtype: ocaclient.models.PickupRequestResponse
+        :raises requests.exceptions.HTTPError: If the WS returns an error.
         """
         return self.IngresoOR(
             usr=self.username,
