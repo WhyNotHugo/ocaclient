@@ -36,7 +36,7 @@ class XmlNodeMixin:
         sanitized_data = {}
         for k, v in data.items():
             if v is None:
-                v = ""
+                v = ''
             if isinstance(v, date):
                 v = v.strftime('%Y%m%d')
             elif not isinstance(v, str):
@@ -73,11 +73,11 @@ class PickupRequest(XmlNodeMixin):
         :param str account_number: The account number given by the courrier.
             Should look something like '123456/000.
         """
-        self.node = etree.Element("ROWS")
+        self.node = etree.Element('ROWS')
         etree.SubElement(
             self.node,
             'cabecera',
-            ver="1.0",
+            ver='1.0',
             nrocuenta=account_number,
         )
         self.shipments = etree.SubElement(self.node, 'envios')
