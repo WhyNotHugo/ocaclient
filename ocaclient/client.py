@@ -23,9 +23,7 @@ NODE_TYPES = {
     'idcentroimposicion': int,
     'idtiposercicio': int,
     'nroproducto': int,
-    'numero': int,
     'numeroenvio': int,
-    'piso': int,
     'plazoentrega': int,
     'precio': Decimal,
     'tarifador': int,
@@ -39,12 +37,12 @@ RESPONSE_TYPES = {
 
 
 def parse_node(node):
-    tag = node.tag.lower()
-
-    if tag in NODE_TYPES:
-        value = NODE_TYPES[tag](node.text)
+    if node.text and node.text.strip():
+        tag = node.tag.lower()
+        raw_value = node.text.strip()
+        value = NODE_TYPES[tag](raw_value)
     else:
-        value = node.text
+        value = None
 
     return value
 
