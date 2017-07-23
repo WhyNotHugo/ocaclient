@@ -39,8 +39,9 @@ RESPONSE_TYPES = {
 def parse_node(node):
     if node.text and node.text.strip():
         tag = node.tag.lower()
-        raw_value = node.text.strip()
-        value = NODE_TYPES[tag](raw_value)
+        value = node.text.strip()
+        if tag in NODE_TYPES:
+            value = NODE_TYPES[tag](value)
     else:
         value = None
 
