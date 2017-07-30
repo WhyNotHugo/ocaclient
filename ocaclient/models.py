@@ -100,7 +100,7 @@ class PickupRequest(XmlNodeMixin):
             standalone=True,
             encoding='iso-8859-1',
             pretty_print=pretty_print,
-        ).decode()
+        ).decode('iso-8859-1')
 
 
 class Origin(XmlNodeMixin):
