@@ -22,7 +22,6 @@ NODE_TYPES = {
     'cantidadrechazados': int,
     'idcentroimposicion': int,
     'idtiposercicio': int,
-    'nroproducto': int,
     'numeroenvio': int,
     'plazoentrega': int,
     'precio': Decimal,
