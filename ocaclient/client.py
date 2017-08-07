@@ -1,3 +1,4 @@
+from base64 import b64decode
 from datetime import datetime
 from decimal import Decimal
 
@@ -12,6 +13,7 @@ from ocaclient import models
 
 
 WSDL = 'http://webservice.oca.com.ar/epak_tracking/Oep_TrackEPak.asmx?WSDL'
+WSDL2 = 'http://webservice.oca.com.ar/oep_tracking/Oep_Track.asmx?Wsdl'
 
 NODE_TYPES = {
     'adicional': Decimal,
@@ -105,8 +107,8 @@ class OcaClient:
         :param str username: The username used at OCA's website.
         :param str password: The password used at OCA's website.
         """
-        transport = Transport(cache=SqliteCache())
-        self.client = Client(WSDL, transport=transport)
+        self.transport = Transport(cache=SqliteCache())
+        self.client = Client(WSDL, transport=self.transport)
 
         self.username = username
         self.password = password
@@ -139,3 +141,18 @@ class OcaClient:
             return_type = RESPONSE_TYPES.get(key, None)
             return OcaOperationProxy(value, self.client, return_type)
         return value
+
+    def get_pdf_labels(self, request_id):
+        """
+        Fetches the PDF labels for a given pickup request.
+
+        :param int request_id: The id of the request returned by
+            create_pickup_request.
+        :returns: bytes
+        """
+        client = Client(WSDL2, transport=self.transport)
+        response = client.service.GetPdfDeEtiquetasPorOrdenOrNumeroEnvio(
+            idOrdenRetiro=request_id,
+            logisticaInversa=False,
+        )
+        return b64decode(response)
