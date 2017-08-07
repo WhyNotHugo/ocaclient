@@ -47,6 +47,10 @@ def parse_node(node):
     return value
 
 
+class OcaWebServiceError(Exception):
+    """Raise when the web service returns some sort of error."""
+
+
 class OcaOperationProxy:
 
     def __init__(self, operation, client, return_type):
@@ -54,15 +58,16 @@ class OcaOperationProxy:
         self.client = client
         self.return_type = return_type
 
-    def __call__(self, *args, **kwargs):
+    def _execute_request(self, *args, **kwargs):
         with self.client.options(raw_response=True):
             response = self.operation.__call__(*args, **kwargs)
 
         response.raise_for_status()
 
-        xml = etree.fromstring(response.content)
-        nodes = xml.xpath('//NewDataSet/Table') or xml.findall('.//Resumen')
+        return response
 
+    def _parse_response(self, xml):
+        nodes = xml.xpath('//NewDataSet/Table') or xml.findall('.//Resumen')
         data = [{
             child.tag.lower(): parse_node(child)
             for child in node.getchildren() if child.tag != 'XML'
@@ -71,10 +76,22 @@ class OcaOperationProxy:
         if self.return_type:
             data = [self.return_type(**entry) for entry in data]
 
-        if len(data) == 1:
-            return data[0]
-
         return data
+
+    def __call__(self, *args, **kwargs):
+        response = self._execute_request(*args, **kwargs)
+        xml = etree.fromstring(response.content)
+
+        errors = xml.xpath('//Errores/Error/Descripcion')
+        if errors:
+            raise OcaWebServiceError(errors[0].text)
+
+        parsed_response = self._parse_response(xml)
+
+        if len(parsed_response) == 1:
+            return parsed_response[0]
+
+        return parsed_response
 
 
 class OcaClient:
