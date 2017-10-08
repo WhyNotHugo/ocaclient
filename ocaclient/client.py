@@ -139,7 +139,7 @@ class OcaClient:
             ConfirmarRetiro=confirm,
             DiasHastaRetiro=days,
             idFranjaHoraria=timerange,
-        )
+        )[0]
 
     def __getattr__(self, key):
         value = getattr(self.client.service, key)
