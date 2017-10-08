@@ -99,9 +99,6 @@ class OcaOperationProxy:
 
         parsed_response = self._parse_response(xml)
 
-        if len(parsed_response) == 1:
-            return parsed_response[0]
-
         return parsed_response
 
 
