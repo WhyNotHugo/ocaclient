@@ -10,7 +10,11 @@ setup(
     url='https://gitlab.com/hobarrera/ocaclient',
     license='MIT',
     packages=['ocaclient'],
-    install_requires=open('requirements.txt').readlines(),
+    install_requires=[
+        'python-dateutil',
+        'lxml',
+        'zeep>=2.2.0',
+    ],
     long_description=open('README.rst').read(),
     use_scm_version={
         'version_scheme': 'post-release',
