@@ -15,9 +15,18 @@ from ocaclient import models
 WSDL = 'http://webservice.oca.com.ar/epak_tracking/Oep_TrackEPak.asmx?WSDL'
 WSDL2 = 'http://webservice.oca.com.ar/oep_tracking/Oep_Track.asmx?Wsdl'
 
+
+def parse_datetime(s):
+    try:
+        return datetime.strptime(s, '%d-%m-%Y').date()
+    except ValueError:
+        # Matches ISO-8601:
+        return parser.parse(s)
+
+
 NODE_TYPES = {
     'adicional': Decimal,
-    'fecha': lambda s: datetime.strptime(s, '%d-%m-%Y').date(),
+    'fecha': parse_datetime,
     'fechaingreso': parser.parse,
     'cantidadregistros': int,
     'cantidadingresados': int,
