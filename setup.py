@@ -13,7 +13,7 @@ setup(
     install_requires=[
         'python-dateutil',
         'lxml',
-        'zeep>=2.2.0',
+        'zeep>=3.0.0',
     ],
     long_description=open('README.rst').read(),
     use_scm_version={

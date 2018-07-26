@@ -6,7 +6,7 @@ from dateutil import parser
 from lxml import etree
 from zeep import Client
 from zeep.cache import SqliteCache
-from zeep.client import OperationProxy
+from zeep.proxy import OperationProxy
 from zeep.transports import Transport
 
 from ocaclient import models
@@ -70,7 +70,7 @@ class OcaOperationProxy:
         self.return_type = return_type
 
     def _execute_request(self, *args, **kwargs):
-        with self.client.options(raw_response=True):
+        with self.client.settings(raw_response=True):
             response = self.operation.__call__(*args, **kwargs)
 
         response.raise_for_status()
