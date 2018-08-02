@@ -7,7 +7,7 @@ setup(
     description="A very simple client for OCA's web services.",
     author='Hugo Osvaldo Barrera',
     author_email='hugo@barrera.io',
-    url='https://gitlab.com/hobarrera/ocaclient',
+    url='https://github.com/WhyNotHugo/ocaclient',
     license='MIT',
     packages=['ocaclient'],
     install_requires=[
