@@ -3,24 +3,26 @@ from datetime import date
 
 from lxml import etree
 
-
-TimeRange = namedtuple('TimeRange', ['id', 'description'])
+TimeRange = namedtuple("TimeRange", ["id", "description"])
 
 TIME_RANGES = (
-    TimeRange(1, '8 - 17hs'),
-    TimeRange(2, '8 - 12hs'),
-    TimeRange(3, '14 - 17hs'),
+    TimeRange(1, "8 - 17hs"),
+    TimeRange(2, "8 - 12hs"),
+    TimeRange(3, "14 - 17hs"),
 )
 
 
-PickupRequestResponse = namedtuple('PickupRequestResponse', [
-    'cantidadingresados',
-    'cantidadrechazados',
-    'cantidadregistros',
-    'codigooperacion',
-    'fechaingreso',
-    'mailusuario',
-])
+PickupRequestResponse = namedtuple(
+    "PickupRequestResponse",
+    [
+        "cantidadingresados",
+        "cantidadrechazados",
+        "cantidadregistros",
+        "codigooperacion",
+        "fechaingreso",
+        "mailusuario",
+    ],
+)
 
 
 class XmlNodeMixin:
@@ -36,9 +38,9 @@ class XmlNodeMixin:
         sanitized_data = {}
         for k, v in data.items():
             if v is None:
-                v = ''
+                v = ""
             if isinstance(v, date):
-                v = v.strftime('%Y%m%d')
+                v = v.strftime("%Y%m%d")
             elif not isinstance(v, str):
                 v = str(v)
             sanitized_data[k] = v
@@ -62,6 +64,7 @@ class PickupRequest(XmlNodeMixin):
     A pickup request is a request for OCA to physically come and pick up
     packages to be send out.
     """
+
     def __init__(self, account_number):
         """
         Create a new pickup request.
@@ -73,14 +76,14 @@ class PickupRequest(XmlNodeMixin):
         :param str account_number: The account number given by the courrier.
             Should look something like '123456/000.
         """
-        self.node = etree.Element('ROWS')
+        self.node = etree.Element("ROWS")
         etree.SubElement(
             self.node,
-            'cabecera',
-            ver='1.0',
+            "cabecera",
+            ver="1.0",
             nrocuenta=account_number,
         )
-        self.shipments = etree.SubElement(self.node, 'envios')
+        self.shipments = etree.SubElement(self.node, "envios")
 
     def add_origin(self, origin):
         assert isinstance(origin, Origin)
@@ -98,29 +101,29 @@ class PickupRequest(XmlNodeMixin):
             self.node,
             xml_declaration=True,
             standalone=True,
-            encoding='iso-8859-1',
+            encoding="iso-8859-1",
             pretty_print=pretty_print,
-        ).decode('iso-8859-1')
+        ).decode("iso-8859-1")
 
 
 class Origin(XmlNodeMixin):
     def __init__(self, **data):
-        self.node = etree.Element('retiro', **self.sanitize_data(data))
+        self.node = etree.Element("retiro", **self.sanitize_data(data))
 
 
 class Shipment(XmlNodeMixin):
     def __init__(self, operative, dispatch, **data):
         self.node = etree.Element(
-            'envio',
+            "envio",
             idoperativa=operative,
             nroremito=dispatch,
         )
         self.destination = etree.SubElement(
             self.node,
-            'destinatario',
+            "destinatario",
             **self.sanitize_data(data),
         )
-        self.packages = etree.SubElement(self.node, 'paquetes')
+        self.packages = etree.SubElement(self.node, "paquetes")
 
     def add_package(self, package):
         assert isinstance(package, Package)
@@ -129,4 +132,4 @@ class Shipment(XmlNodeMixin):
 
 class Package(XmlNodeMixin):
     def __init__(self, **data):
-        self.node = etree.Element('paquete', **self.sanitize_data(data))
+        self.node = etree.Element("paquete", **self.sanitize_data(data))

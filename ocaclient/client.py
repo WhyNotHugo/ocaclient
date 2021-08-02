@@ -11,38 +11,37 @@ from zeep.transports import Transport
 
 from ocaclient import models
 
-
-WSDL = 'http://webservice.oca.com.ar/epak_tracking/Oep_TrackEPak.asmx?WSDL'
-WSDL2 = 'http://webservice.oca.com.ar/oep_tracking/Oep_Track.asmx?Wsdl'
+WSDL = "http://webservice.oca.com.ar/epak_tracking/Oep_TrackEPak.asmx?WSDL"
+WSDL2 = "http://webservice.oca.com.ar/oep_tracking/Oep_Track.asmx?Wsdl"
 
 
 def parse_datetime(s):
     try:
-        return datetime.strptime(s, '%d-%m-%Y').date()
+        return datetime.strptime(s, "%d-%m-%Y").date()
     except ValueError:
         # Matches ISO-8601:
         return parser.parse(s)
 
 
 NODE_TYPES = {
-    'adicional': Decimal,
-    'fecha': parse_datetime,
-    'fechaingreso': parser.parse,
-    'cantidadregistros': int,
-    'cantidadingresados': int,
-    'cantidadrechazados': int,
-    'idcentroimposicion': int,
-    'idtiposercicio': int,
-    'numeroenvio': int,
-    'plazoentrega': int,
-    'precio': Decimal,
-    'tarifador': int,
-    'total': Decimal,
+    "adicional": Decimal,
+    "fecha": parse_datetime,
+    "fechaingreso": parser.parse,
+    "cantidadregistros": int,
+    "cantidadingresados": int,
+    "cantidadrechazados": int,
+    "idcentroimposicion": int,
+    "idtiposercicio": int,
+    "numeroenvio": int,
+    "plazoentrega": int,
+    "precio": Decimal,
+    "tarifador": int,
+    "total": Decimal,
 }
 
 
 RESPONSE_TYPES = {
-    'IngresoOR': models.PickupRequestResponse,
+    "IngresoOR": models.PickupRequestResponse,
 }
 
 
@@ -63,7 +62,6 @@ class OcaWebServiceError(Exception):
 
 
 class OcaOperationProxy:
-
     def __init__(self, operation, client, return_type):
         self.operation = operation
         self.client = client
@@ -78,11 +76,15 @@ class OcaOperationProxy:
         return response
 
     def _parse_response(self, xml):
-        nodes = xml.xpath('//NewDataSet/Table') or xml.findall('.//Resumen')
-        data = [{
-            child.tag.lower(): parse_node(child)
-            for child in node.getchildren() if child.tag != 'XML'
-        } for node in nodes]
+        nodes = xml.xpath("//NewDataSet/Table") or xml.findall(".//Resumen")
+        data = [
+            {
+                child.tag.lower(): parse_node(child)
+                for child in node.getchildren()
+                if child.tag != "XML"
+            }
+            for node in nodes
+        ]
 
         if self.return_type:
             data = [self.return_type(**entry) for entry in data]
@@ -93,7 +95,7 @@ class OcaOperationProxy:
         response = self._execute_request(*args, **kwargs)
         xml = etree.fromstring(response.content)
 
-        errors = xml.xpath('//Errores/Error/Descripcion')
+        errors = xml.xpath("//Errores/Error/Descripcion")
         if errors:
             raise OcaWebServiceError(errors[0].text)
 
@@ -103,7 +105,6 @@ class OcaOperationProxy:
 
 
 class OcaClient:
-
     def __init__(self, username=None, password=None):
         """
         Creates a new OcaClient instance.
