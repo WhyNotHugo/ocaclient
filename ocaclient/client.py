@@ -105,14 +105,14 @@ class OcaOperationProxy:
 
 
 class OcaClient:
-    def __init__(self, username=None, password=None):
+    def __init__(self, username: str = None, password: str = None):
         """
         Creates a new OcaClient instance.
 
         Username and password are only required for pick request creation.
 
-        :param str username: The username used at OCA's website.
-        :param str password: The password used at OCA's website.
+        :param username: The username used at OCA's website.
+        :param password: The password used at OCA's website.
         """
         self.transport = Transport(cache=SqliteCache())
         self.client = Client(WSDL, transport=self.transport)
@@ -120,17 +120,22 @@ class OcaClient:
         self.username = username
         self.password = password
 
-    def create_pickup_request(self, request, days, timerange, confirm=False):
+    def create_pickup_request(
+        self,
+        request: models.PickupRequest,
+        days: int,
+        timerange: int,
+        confirm=False,
+    ) -> models.PickupRequestResponse:
         """
         Create a new pickup request order
 
-        :param ocaclient.models.PickupRequest: The request to send to OCA.
-        :param int days: How many days into the future this order must be
+        :param request: The request to send to OCA.
+        :param days: How many days into the future this order must be
             picked up.
-        :params int timerange: the timerange where this order should be picked
-            up.  See `ocaclient.models.TIME_RANGES`.
+        :params timerange: the timerange where this order should be picked
+            up.  See ``ocaclient.models.TIME_RANGES``.
         :return: The request creation data.
-        :rtype: ocaclient.models.PickupRequestResponse
         :raises requests.exceptions.HTTPError: If the WS returns an error.
         """
         return self.IngresoOR(
@@ -149,13 +154,11 @@ class OcaClient:
             return OcaOperationProxy(value, self.client, return_type)
         return value
 
-    def get_pdf_labels(self, request_id):
+    def get_pdf_labels(self, request_id: int) -> bytes:
         """
         Fetches the PDF labels for a given pickup request.
 
-        :param int request_id: The id of the request returned by
-            create_pickup_request.
-        :returns: bytes
+        :param request_id: The id of the request returned by create_pickup_request.
         """
         client = Client(WSDL2, transport=self.transport)
         response = client.service.GetPdfDeEtiquetasPorOrdenOrNumeroEnvio(

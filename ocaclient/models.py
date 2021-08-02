@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from collections import namedtuple
 from datetime import date
 
@@ -65,7 +67,7 @@ class PickupRequest(XmlNodeMixin):
     packages to be send out.
     """
 
-    def __init__(self, account_number):
+    def __init__(self, account_number: str):
         """
         Create a new pickup request.
 
@@ -73,7 +75,7 @@ class PickupRequest(XmlNodeMixin):
         add_shipment.
         Note that a single request can include multiple shipments.
 
-        :param str account_number: The account number given by the courrier.
+        :param account_number: The account number given by the courrier.
             Should look something like '123456/000.
         """
         self.node = etree.Element("ROWS")
@@ -85,11 +87,11 @@ class PickupRequest(XmlNodeMixin):
         )
         self.shipments = etree.SubElement(self.node, "envios")
 
-    def add_origin(self, origin):
+    def add_origin(self, origin: Origin):
         assert isinstance(origin, Origin)
         self.node.append(origin.node)
 
-    def add_shipment(self, shipment):
+    def add_shipment(self, shipment: Shipment):
         assert isinstance(shipment, Shipment)
         self.shipments.append(shipment.node)
 
@@ -103,7 +105,9 @@ class PickupRequest(XmlNodeMixin):
             standalone=True,
             encoding="iso-8859-1",
             pretty_print=pretty_print,
-        ).decode("iso-8859-1")
+        ).decode(
+            "iso-8859-1",
+        )
 
 
 class Origin(XmlNodeMixin):
@@ -112,7 +116,7 @@ class Origin(XmlNodeMixin):
 
 
 class Shipment(XmlNodeMixin):
-    def __init__(self, operative, dispatch, **data):
+    def __init__(self, operative: str, dispatch: str, **data):
         self.node = etree.Element(
             "envio",
             idoperativa=operative,
