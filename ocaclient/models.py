@@ -129,7 +129,7 @@ class Shipment(XmlNodeMixin):
         )
         self.packages = etree.SubElement(self.node, "paquetes")
 
-    def add_package(self, package):
+    def add_package(self, package: Package):
         assert isinstance(package, Package)
         self.packages.append(package.node)
 
