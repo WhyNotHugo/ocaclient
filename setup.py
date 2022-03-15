@@ -8,7 +8,7 @@ setup(
     author="Hugo Osvaldo Barrera",
     author_email="hugo@barrera.io",
     url="https://github.com/WhyNotHugo/ocaclient",
-    license="MIT",
+    license="ISC",
     packages=["ocaclient"],
     install_requires=[
         "python-dateutil",
