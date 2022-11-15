@@ -105,7 +105,7 @@ class OcaOperationProxy:
 
 
 class OcaClient:
-    def __init__(self, username: str = None, password: str = None):
+    def __init__(self, username: str | None = None, password: str | None = None):
         """
         Creates a new OcaClient instance.
 
