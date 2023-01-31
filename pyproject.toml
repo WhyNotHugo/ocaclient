@@ -14,6 +14,7 @@ select = [
     "PT",
     "SIM",
     "TID",
+    "T10"
 ]
 target-version = "py37"
 
