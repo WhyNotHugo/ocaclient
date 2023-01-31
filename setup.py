@@ -2,6 +2,9 @@
 
 from setuptools import setup
 
+with open("README.rst") as f:
+    readme = f.read()
+
 setup(
     name="ocaclient",
     description="A very simple client for OCA's web services.",
@@ -15,7 +18,7 @@ setup(
         "lxml",
         "zeep>=3.0.0",
     ],
-    long_description=open("README.rst").read(),
+    long_description=readme,
     use_scm_version={
         "version_scheme": "post-release",
         "write_to": "ocaclient/version.py",
