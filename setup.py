@@ -18,6 +18,13 @@ setup(
         "lxml",
         "zeep>=3.0.0",
     ],
+    extras_require={
+        "dev": [
+            "ipython",
+            "mypy",
+            "types-python-dateutil",
+        ],
+    },
     long_description=readme,
     use_scm_version={
         "version_scheme": "post-release",
