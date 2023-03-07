@@ -1,4 +1,7 @@
+from __future__ import annotations
+
 from base64 import b64decode
+from datetime import date
 from datetime import datetime
 from decimal import Decimal
 
@@ -15,7 +18,7 @@ WSDL = "http://webservice.oca.com.ar/epak_tracking/Oep_TrackEPak.asmx?WSDL"
 WSDL2 = "http://webservice.oca.com.ar/oep_tracking/Oep_Track.asmx?Wsdl"
 
 
-def parse_datetime(s: str):
+def parse_datetime(s: str) -> datetime | date:
     try:
         return datetime.strptime(s, "%d-%m-%Y").date()
     except ValueError:

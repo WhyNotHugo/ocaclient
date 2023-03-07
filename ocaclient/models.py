@@ -67,7 +67,7 @@ class PickupRequest(XmlNodeMixin):
     packages to be send out.
     """
 
-    def __init__(self, account_number: str):
+    def __init__(self, account_number: str) -> None:
         """
         Create a new pickup request.
 
